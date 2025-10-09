@@ -13,8 +13,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Build Docker Image
-        run: docker build -t maryumshakeel123/myapp:latest .
+     - name: Build Docker Image
+  run: docker build -t maryumshakeel123/myapp:latest .
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -23,4 +23,4 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Push Docker Image
-        run: docker push maryumshakeel123/myapp:latest
+  run: docker push maryumshakeel123/myapp:latest
