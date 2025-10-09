@@ -22,8 +22,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build Docker image
-        run: docker build -t maryumshakeel123/myapp:latest .
+      - name: Build and Push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          tags: |
+            maryumshakeel123/myapp:latest
+            maryumshakeel123/myapp:v1
 
-      - name: Push Docker image to Docker Hub
-        run: docker push maryumshakeel123/myapp:latest
