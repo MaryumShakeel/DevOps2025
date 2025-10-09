@@ -15,6 +15,29 @@ git add Dockerfile README.md
 git commit -m "Added Dockerfile and instructions for DEVOPS Deliverable 2"
 git push
 
+Description of our CI/CD pipeline
+This project uses GitHub Actions to build and push a Docker image automatically when code is pushed to the main branch.
+
+Instructions to run and deploy app
+docker build -t myapp . and docker run -p 3000:3000 myapp
+
+Changelog section
+Updated Dockerfile and CI/CD workflow on Oct 9, 2025.
+
+# Update: Testing CI/CD workflow by Maryum
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # MyApp – Docker Containerization
 # (updated timestamp for GitHub)
