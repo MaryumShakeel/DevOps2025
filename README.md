@@ -19,12 +19,14 @@ Description of our CI/CD pipeline
 This project uses GitHub Actions to build and push a Docker image automatically when code is pushed to the main branch.
 
 Instructions to run and deploy app
-docker build -t myapp . and docker run -p 3000:3000 myapp
+docker build -t myapp . 
+and docker run -p 3000:3000 myapp (3000  Development (React default port))
+docker run -p 80:80 myapp  (80  Production (HTTP standard port for browser access))
 
 Changelog section
 Updated Dockerfile and CI/CD workflow on Oct 9, 2025.
 
-# Update: Testing CI/CD workflow by Maryum
+
 
 
 
