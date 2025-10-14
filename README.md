@@ -24,8 +24,9 @@ and docker run -p 3000:3000 myapp (3000  Development (React default port))
 docker run -p 80:80 myapp  (80  Production (HTTP standard port for browser access))
 
 Changelog section
-Updated Dockerfile and CI/CD workflow on Oct 9, 2025.
+Updated Dockerfile and CI/CD workflow on Oct 14, 2025.
 
+<<<<<<< HEAD
 
 
 
@@ -43,3 +44,8 @@ Updated Dockerfile and CI/CD workflow on Oct 9, 2025.
 
 # MyApp – Docker Containerization
 # (updated timestamp for GitHub)
+=======
+## 🎥 Project Demo  From MAryum Side
+Watch the full demo video here: [Click to Watch](https://drive.google.com/file/d/1bw7VUaA2qcQylTJXBVppbmZvl7OpUE0v/view?usp=sharing)
+
+>>>>>>> f0163e3 (Updated README file with video link and CI/CD details)
