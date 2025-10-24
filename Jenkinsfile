@@ -1,31 +1,53 @@
-name: CI/CD Pipeline by Maryum
+pipeline {
+    agent any
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    environment {
+        // Docker Hub credentials
+        DOCKERHUB_USERNAME = 'maryumshakeel123'
+        DOCKERHUB_TOKEN = 'New-Token'
+        IMAGE_NAME = 'maryumshakeel123/myapp:latest' // Assignment ke liye latest tag
+    }
 
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
+    stages {
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main', url: 'https://github.com/MaryumShakeel/DevOps2025.git'
+            }
+        }
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build("${IMAGE_NAME}")
+                }
+            }
+        }
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        stage('Login to Docker Hub') {
+            steps {
+                script {
+                    sh "echo ${DOCKERHUB_TOKEN} | docker login -u ${DOCKERHUB_USERNAME} --password-stdin"
+                    echo 'Logged in to Docker Hub successfully!'
+                }
+            }
+        }
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    docker.image("${IMAGE_NAME}").push()
+                    echo 'Docker image pushed successfully!'
+                }
+            }
+        }
+    }
 
-      - name: Build and Push Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          push: true
-          tags: maryumshakeel123/myapp:latest
+    post {
+        success {
+            echo 'CI/CD Pipeline completed successfully!'
+        }
+        failure {
+            echo 'CI/CD Pipeline failed!'
+        }
+    }
+}
