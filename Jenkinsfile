@@ -2,10 +2,8 @@ pipeline {
     agent any
 
     environment {
-        // Docker Hub credentials
-        DOCKERHUB_USERNAME = 'maryumshakeel123'
-        DOCKERHUB_TOKEN = 'New-Token'
-        IMAGE_NAME = 'maryumshakeel123/myapp:latest' // Assignment ke liye latest tag
+        DOCKERHUB_CREDENTIALS = 'dockerhub-creds' // Jenkins credentials ID
+        IMAGE_NAME = 'maryumshakeel123/myapp:latest'
     }
 
     stages {
@@ -19,35 +17,29 @@ pipeline {
             steps {
                 script {
                     docker.build("${IMAGE_NAME}")
+                    echo 'Docker image built successfully!'
                 }
             }
         }
 
-        stage('Login to Docker Hub') {
+        stage('Login to Docker Hub & Push Image') {
             steps {
                 script {
-                    sh "echo ${DOCKERHUB_TOKEN} | docker login -u ${DOCKERHUB_USERNAME} --password-stdin"
-                    echo 'Logged in to Docker Hub successfully!'
-                }
-            }
-        }
-
-        stage('Push Docker Image') {
-            steps {
-                script {
-                    docker.image("${IMAGE_NAME}").push()
-                    echo 'Docker image pushed successfully!'
+                    withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDENTIALS}", 
+                                                     usernameVariable: 'USERNAME', 
+                                                     passwordVariable: 'PASSWORD')]) {
+                        sh "echo $PASSWORD | docker login -u $USERNAME --password-stdin"
+                        docker.image("${IMAGE_NAME}").push()
+                        echo 'Docker image pushed to Docker Hub successfully!'
+                    }
                 }
             }
         }
     }
 
     post {
-        success {
-            echo 'CI/CD Pipeline completed successfully!'
-        }
-        failure {
-            echo 'CI/CD Pipeline failed!'
-        }
+        success { echo 'Pipeline completed successfully!' }
+        failure { echo 'Pipeline failed!' }
     }
 }
+
