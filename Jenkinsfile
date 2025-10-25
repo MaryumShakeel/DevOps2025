@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = 'dockerhub-creds' // Jenkins Docker credentials ID
+        DOCKERHUB_CREDENTIALS = 'dockerhub-creds'   // Jenkins Docker credentials ID
         IMAGE_NAME = 'maryumshakeel123/myapp:latest'
         NODE_VERSION = '22.13.1'
     }
@@ -10,10 +10,9 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                // Increase Git buffer for heavy repo
+                echo '🔹 Checking out code from GitHub...'
                 sh 'git config --global http.postBuffer 524288000'
-                
-                // Shallow clone to avoid large fetch issues
+
                 checkout([$class: 'GitSCM',
                           branches: [[name: 'main']],
                           doGenerateSubmoduleConfigurations: false,
@@ -25,7 +24,7 @@ pipeline {
 
         stage('Install Node.js Dependencies') {
             steps {
-                // Ensure Node.js is available on EC2 Jenkins agent
+                echo '🔹 Installing Node.js dependencies...'
                 sh '''
                    node -v
                    npm install
@@ -35,30 +34,33 @@ pipeline {
 
         stage('Build Vite App') {
             steps {
-                sh '''
-                   npm run build
-                '''
+                echo '🔹 Building Vite App...'
+                sh 'npm run build'
             }
         }
 
         stage('Build Docker Image') {
             steps {
+                echo '🐳 Building Docker image...'
                 script {
-                    docker.build("${IMAGE_NAME}")
-                    echo 'Docker image built successfully!'
+                    sh "docker build -t ${IMAGE_NAME} ."
+                    echo '✅ Docker image built successfully!'
                 }
             }
         }
 
         stage('Login to Docker Hub & Push Image') {
             steps {
+                echo '🔹 Logging into Docker Hub and pushing image...'
                 script {
-                    withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDENTIALS}", 
-                                                     usernameVariable: 'USERNAME', 
+                    withCredentials([usernamePassword(credentialsId: "${DOCKERHUB_CREDENTIALS}",
+                                                     usernameVariable: 'USERNAME',
                                                      passwordVariable: 'PASSWORD')]) {
-                        sh "echo $PASSWORD | docker login -u $USERNAME --password-stdin"
-                        docker.image("${IMAGE_NAME}").push()
-                        echo 'Docker image pushed successfully!'
+                        sh '''
+                            echo "$PASSWORD" | docker login -u "$USERNAME" --password-stdin
+                            docker push ${IMAGE_NAME}
+                        '''
+                        echo '✅ Docker image pushed successfully!'
                     }
                 }
             }
@@ -67,10 +69,10 @@ pipeline {
 
     post {
         success {
-            echo 'Pipeline completed successfully!'
+            echo '🎉 Pipeline completed successfully! Image pushed to Docker Hub.'
         }
         failure {
-            echo 'Pipeline failed!'
+            echo '❌ Pipeline failed! Check the logs for details.'
         }
     }
 }
