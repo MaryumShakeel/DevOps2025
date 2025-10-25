@@ -1,4 +1,3 @@
-test('Simple addition test', () => {
-  const sum = 2 + 3;
-  expect(sum).toBe(5);
+test('adds 2 + 2 equals 4', () => {
+  expect(2 + 2).toBe(4);
 });
