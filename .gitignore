@@ -1,39 +1,81 @@
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+pipeline {
+    agent any
 
-# dependencies
-node_modules/
+    stages {
+        stage('Checkout Code') {
+            steps {
+                echo "🔹 Checking out code from GitHub..."
+                checkout scm
+            }
+        }
 
-# Expo
-.expo/
-dist/
-web-build/
-expo-env.d.ts
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh '''
+                        echo "Installing dependencies on Linux..."
+                        npm install
+                        '''
+                    } else {
+                        bat '''
+                        echo Installing dependencies on Windows...
+                        npm install
+                        '''
+                    }
+                }
+            }
+        }
 
-# Native
-.kotlin/
-*.orig.*
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
+        stage('Run Tests') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh '''
+                        echo "🧪 Running Jest tests on Linux..."
+                        npm test
+                        '''
+                    } else {
+                        bat '''
+                        echo Running Jest tests on Windows...
+                        npm test
+                        '''
+                    }
+                }
+            }
+        }
 
-# Metro
-.metro-health-check*
+        stage('Build App') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'npm run build'
+                    } else {
+                        bat 'npm run build'
+                    }
+                }
+            }
+        }
 
-# debug
-npm-debug.*
-yarn-debug.*
-yarn-error.*
+        stage('Docker Build') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh 'docker build -t maryumshakeel123/myapp:latest .'
+                    } else {
+                        bat 'docker build -t maryumshakeel123/myapp:latest .'
+                    }
+                }
+            }
+        }
+    }
 
-# macOS
-.DS_Store
-*.pem
-
-# local env files
-.env*.local
-
-# typescript
-*.tsbuildinfo
-
-app-example
+    post {
+        success {
+            echo "✅ Build completed successfully!"
+        }
+        failure {
+            echo "❌ Build failed!"
+        }
+    }
+}
