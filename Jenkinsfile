@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                echo "🔹 Checking out code from GitHub..."
+                echo " Checking out code from GitHub..."
                 checkout scm
             }
         }
@@ -32,7 +32,7 @@ pipeline {
                 script {
                     if (isUnix()) {
                         sh '''
-                        echo "🧪 Running Jest tests on Linux..."
+                        echo " Running Jest tests on Linux..."
                         npm test
                         '''
                     } else {
@@ -72,10 +72,10 @@ pipeline {
 
     post {
         success {
-            echo "✅ Build completed successfully!"
+            echo " Build completed successfully!"
         }
         failure {
-            echo "❌ Build failed!"
+            echo " Build failed!"
         }
     }
 }
