@@ -4,12 +4,13 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                echo " Checking out code from GitHub..."
-                git(
-                    url: 'https://github.com/MaryumShakeel/DevOps2025.git',
-                    branch: 'main',
-                    timeout: 30
-                )
+                echo "Checking out code from GitHub..."
+                timeout(time: 5, unit: 'MINUTES') {
+                    git(
+                        url: 'https://github.com/MaryumShakeel/DevOps2025.git',
+                        branch: 'main'
+                    )
+                }
             }
         }
 
@@ -17,9 +18,15 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh 'echo "Installing dependencies on Linux..." && npm install'
+                        sh '''
+                        echo "Installing dependencies on Linux..."
+                        npm install
+                        '''
                     } else {
-                        bat 'echo Installing dependencies on Windows... && npm install'
+                        bat '''
+                        echo Installing dependencies on Windows...
+                        npm install
+                        '''
                     }
                 }
             }
@@ -29,9 +36,15 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh 'echo " Running Jest tests on Linux..." && npm test'
+                        sh '''
+                        echo "Running Jest tests on Linux..."
+                        npm test
+                        '''
                     } else {
-                        bat 'echo Running Jest tests on Windows... && npm test'
+                        bat '''
+                        echo Running Jest tests on Windows...
+                        npm test
+                        '''
                     }
                 }
             }
@@ -64,10 +77,10 @@ pipeline {
 
     post {
         success {
-            echo " Build completed successfully!"
+            echo "✅ Build completed successfully!"
         }
         failure {
-            echo " Build failed!"
+            echo "❌ Build failed! Please check the logs."
         }
     }
 }
