@@ -5,7 +5,11 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 echo " Checking out code from GitHub..."
-                checkout scm
+                git(
+                    url: 'https://github.com/MaryumShakeel/DevOps2025.git',
+                    branch: 'main',
+                    timeout: 30
+                )
             }
         }
 
@@ -13,15 +17,9 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh '''
-                        echo "Installing dependencies on Linux..."
-                        npm install
-                        '''
+                        sh 'echo "Installing dependencies on Linux..." && npm install'
                     } else {
-                        bat '''
-                        echo Installing dependencies on Windows...
-                        npm install
-                        '''
+                        bat 'echo Installing dependencies on Windows... && npm install'
                     }
                 }
             }
@@ -31,15 +29,9 @@ pipeline {
             steps {
                 script {
                     if (isUnix()) {
-                        sh '''
-                        echo " Running Jest tests on Linux..."
-                        npm test
-                        '''
+                        sh 'echo " Running Jest tests on Linux..." && npm test'
                     } else {
-                        bat '''
-                        echo Running Jest tests on Windows...
-                        npm test
-                        '''
+                        bat 'echo Running Jest tests on Windows... && npm test'
                     }
                 }
             }
