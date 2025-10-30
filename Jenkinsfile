@@ -1,8 +1,8 @@
+
 pipeline {
     agent any
 
     stages {
-
         stage('Checkout Code') {
             steps {
                 echo "Checking out code from GitHub..."
@@ -22,31 +22,34 @@ pipeline {
                         sh '''
                         echo "Installing dependencies on Linux..."
                         npm install
-                        npm install --save-dev jest-junit
                         '''
                     } else {
                         bat '''
                         echo Installing dependencies on Windows...
                         npm install
-                        npm install --save-dev jest-junit
                         '''
                     }
                 }
             }
         }
 
-       stage('Run Tests') {
-    steps {
-        script {
-            if (isUnix()) {
-                sh 'npm test || true'
-            } else {
-                bat 'npm test || exit 0'
+        stage('Run Tests') {
+            steps {
+                script {
+                    if (isUnix()) {
+                        sh '''
+                        echo "Running Jest tests on Linux..."
+                        npm test
+                        '''
+                    } else {
+                        bat '''
+                        echo Running Jest tests on Windows...
+                        npm test
+                        '''
+                    }
+                }
             }
         }
-    }
-}
-
 
         stage('Build App') {
             steps {
@@ -74,19 +77,11 @@ pipeline {
     }
 
     post {
-        always {
-            echo "📄 Collecting Jest Test Reports..."
-            junit 'test-results/*.xml'
-            archiveArtifacts artifacts: 'test-results/*.xml', fingerprint: true
-        }
-        unstable {
-            echo "⚠️ Tests failed — build marked unstable!"
-        }
         success {
-            echo "✅ Build completed successfully!"
+            echo " Build completed successfully!"
         }
         failure {
-            echo "❌ Build failed! Check logs."
+            echo " Build failed! Please check the logs."
         }
     }
 }
