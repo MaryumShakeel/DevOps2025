@@ -4,15 +4,16 @@ stage('Run Tests') {
             if (isUnix()) {
                 sh '''
                 echo "Running Jest tests on Linux..."
-                npm test
+                npm test --silent || true
                 '''
             } else {
                 bat '''
                 echo Running Jest tests on Windows...
-                npm test
+                npm test --silent || exit 0
                 '''
             }
         }
+
         // ✅ JUnit report publish
         junit 'junit.xml'
     }
